@@ -7,7 +7,7 @@ let gameDisplay = document.querySelector("#game-details")
 let toggle = document.querySelector("#toggle-form")
 
 // Functions
-function showForm(e) {
+function toggleForm(e) {
     if (e.target.textContent === 'Filter by Opening') {
         openingForm.className = 'visible'
         e.target.textContent = 'Collapse'
@@ -15,17 +15,31 @@ function showForm(e) {
         openingForm.className = 'hidden'
         e.target.textContent = 'Filter by Opening'
     }
-
 }
 
 function searchUser(e) {
     e.preventDefault()
 
+    userStats.innerHTML = ''
+    userGames.innerHTML = ''
+    gameDisplay.innerHTML = ''
+    
     displayUserStats(e)
     displayUserGames(e)
     toggle.className = 'visible'
 
     form.reset()
+}
+
+function searchOpenings(e) {
+    e.preventDefault()
+
+    userGames.innerHTML = ''
+    gameDisplay.innerHTML = ''
+
+    displayUserOpenings(e)
+
+    openingForm.reset()
 }
 
 function displayUserStats(e) {
@@ -43,11 +57,10 @@ function displayUserStats(e) {
         return JSON.parse(str)
     })
     .then(data => {
-        userStats.innerHTML = ''
-        gameDisplay.innerHTML = ''
         
         let name = document.createElement('h2')
         let link = document.createElement('a')
+        link.id = 'username-display'
         link.href = data[0].url
         link.textContent = data[0].username
         link.target = '_blank'
@@ -81,7 +94,6 @@ function displayUserGames(e) {
         return JSON.parse(str)
     })
     .then(games => {
-        userGames.innerHTML = ''
         let h3 = document.createElement('h3')
         h3.textContent = "Recent Games"
         userGames.appendChild(h3)
@@ -109,6 +121,25 @@ function displayUserGames(e) {
     })
 }
 
+function displayUserOpenings(e) {
+    let username = document.querySelector('#username-display').textContent
+    let color = document.querySelector('#color').value
+    let play = document.querySelector('#play').value
+    fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}&recentGames=5`, {
+        method: 'GET',
+        headers: {
+            'Accept': "application/x-ndjson"
+        }
+    })
+    .then(res => res.text())
+    .then(body => {
+        let str = "[" + body.replace(/\r?\n/g, ",").replace(/,\s*$/, "") + "]"
+        return JSON.parse(str)
+    })
+    .then(data => console.log(data))
+}
+
 // Event Listeners
 form.addEventListener('submit', searchUser)
-toggle.addEventListener('click', showForm)
+toggle.addEventListener('click', toggleForm)
+openingForm.addEventListener('submit', searchOpenings)
