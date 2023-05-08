@@ -32,12 +32,22 @@ function displayUserStats(e) {
         userStats.innerHTML = ''
         
         let name = document.createElement('h2')
-        name.textContent = data[0].username
+        let link = document.createElement('a')
+        link.href = data[0].url
+        link.textContent = data[0].username
+
+        name.append(link)
 
         let blitzRating = document.createElement('p')
         blitzRating.textContent = `Blitz Rating: ${data[0].perfs.blitz.rating}`
 
-        userStats.append(name, blitzRating)
+        let rapidRating = document.createElement('p')
+        rapidRating.textContent = `Rapid Rating: ${data[0].perfs.rapid.rating}`
+
+        let classicalRating = document.createElement('p')
+        classicalRating.textContent = `Classical Rating: ${data[0].perfs.classical.rating}`
+
+        userStats.append(name, blitzRating, rapidRating, classicalRating)
     })
 }
 
@@ -56,8 +66,11 @@ function displayUserGames(e) {
     })
     .then(games => {
         userGames.innerHTML = ''
+        let h3 = document.createElement('h3')
+        h3.textContent = "Recent Games"
+        userGames.appendChild(h3)
         games.forEach(game => {
-            let gameTitle = document.createElement('h4')
+            let gameTitle = document.createElement('p')
             gameTitle.textContent = `${game.players.white.user.name} vs. ${game.players.black.user.name}`
             userGames.appendChild(gameTitle)
         })

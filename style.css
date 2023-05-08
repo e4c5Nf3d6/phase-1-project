@@ -9,5 +9,7 @@ main {
 }
 
 #user-info {
-    border: solid 2px black
+    border: solid 2px black;
+    padding-left: 10px;
+    padding-right: 10px;
 }
