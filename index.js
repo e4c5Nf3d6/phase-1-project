@@ -1,15 +1,29 @@
 // Definitions
 let form = document.querySelector("#user-search")
+let openingForm = document.querySelector("#opening-search")
 let userGames = document.querySelector("#user-games")
 let userStats = document.querySelector("#user-stats")
 let gameDisplay = document.querySelector("#game-details")
+let toggle = document.querySelector("#toggle-form")
 
 // Functions
+function showForm(e) {
+    if (e.target.textContent === 'Filter by Opening') {
+        openingForm.className = 'visible'
+        e.target.textContent = 'Collapse'
+    } else if (e.target.textContent === 'Collapse') {
+        openingForm.className = 'hidden'
+        e.target.textContent = 'Filter by Opening'
+    }
+
+}
+
 function searchUser(e) {
     e.preventDefault()
 
     displayUserStats(e)
     displayUserGames(e)
+    toggle.className = 'visible'
 
     form.reset()
 }
@@ -29,8 +43,8 @@ function displayUserStats(e) {
         return JSON.parse(str)
     })
     .then(data => {
-        console.log(data)
         userStats.innerHTML = ''
+        gameDisplay.innerHTML = ''
         
         let name = document.createElement('h2')
         let link = document.createElement('a')
@@ -90,7 +104,6 @@ function displayUserGames(e) {
                 let display = document.createElement('iframe')
                 display.src = `https://lichess.org/embed/game/${game.id}?theme=auto&bg=auto`
                 gameDisplay.appendChild(display)
-                console.log(game)
             })
         })
     })
@@ -98,3 +111,4 @@ function displayUserGames(e) {
 
 // Event Listeners
 form.addEventListener('submit', searchUser)
+toggle.addEventListener('click', showForm)

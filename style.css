@@ -1,14 +1,23 @@
 body {
-    font-family: 'Roboto', sans-serif;}
+    font-family: 'Roboto', sans-serif;
+}
 
 header {
     text-align: center;
-    margin: 50px
+    margin: 50px;
+}
+
+.visible {
+    display: block;
+}
+
+.hidden {
+    display: none;
 }
 
 main {
 	display: grid;
-	grid-template-columns: 3fr 6fr
+	grid-template-columns: 3fr 6fr;
 }
 
 #user-info {
@@ -23,5 +32,5 @@ main {
 
 iframe {
     width:600px;
-    height: 397px 
+    height: 397px;
 }

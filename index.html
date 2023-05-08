@@ -8,23 +8,46 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     </head>
+    
     <body>
         <header>
             <h1>Lichess Search</h1>
             <form id="user-search">
                 <label for="username">Find a Lichess User</label> <br><br>
-                <input type="text" id="username" name="username" placeholder="Enter Username" required/>
+                <input type="text" id="username" name="username" placeholder="Enter Username" required/> <br><br>
                 <input type="submit" id="submit" value="Search" />
             </form>
         </header>
+
         <main>
             <section id="user-info">
                 <div id="user-stats"></div>
                 <div id="user-games"></div>
+                <div id="opening-search-container">
+                    <button id="toggle-form" class="hidden">Filter by Opening</button><br>
+                    <form class="hidden" id="opening-search">
+                        <label for="color">Color</label><br>
+                        <select id="color" name="color" required>
+                            <option value="" disabled selected>Choose a Color</option>
+                            <option value="white">White</option>
+                            <option value="black">Black</option>
+                        </select> <br><br>
+                        
+                        <label for="opening">Opening</label><br>
+                        <select id="opening" name="opening" required>
+                            <option value="" disabled selected>Choose an Opening</option>
+                            <option value="white">White</option>
+                            <option value="black">Black</option>
+                        </select> <br><br>
+        
+                        <input type="submit" id="opening-submit" value="Search" />
+                    </form> <br>
+                </div>
             </section>
             <section id="game-details">
 
             </section>
         </main>
+
     </body>
 </html>
