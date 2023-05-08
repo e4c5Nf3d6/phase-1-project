@@ -99,6 +99,7 @@ function displayUserGames(e) {
         userGames.appendChild(h3)
         games.forEach(game => {
             let gameObj = {
+                number: games.indexOf(game),
                 winner: game.winner,
                 whiteUser: game.players.white.user.name,
                 blackUser: game.players.black.user.name,
@@ -130,6 +131,7 @@ function displayUserOpenings(e) {
         userGames.appendChild(h3)
         array[0].recentGames.forEach(game => {
             let gameObj = {
+                number: array[0].recentGames.indexOf(game),
                 winner: game.winner,
                 whiteUser: game.white.name,
                 blackUser: game.black.name,
@@ -152,6 +154,7 @@ function displayGame(gameObj) {
 
     let gameTitle = document.createElement('p')
     gameTitle.textContent = `${gameObj.whiteUser} vs. ${gameObj.blackUser} (${result})`
+    gameTitle.className = 'title'
     userGames.appendChild(gameTitle)
 
     gameTitle.addEventListener('click', function () {
@@ -160,6 +163,10 @@ function displayGame(gameObj) {
         display.src = `https://lichess.org/embed/game/${gameObj.id}?theme=auto&bg=auto`
         gameDisplay.appendChild(display)
     })
+
+    if (gameObj.number === 0) {
+        gameTitle.click()
+    }
 }
 
 // Event Listeners
