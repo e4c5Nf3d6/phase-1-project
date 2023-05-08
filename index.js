@@ -76,7 +76,10 @@ function displayUserStats(e) {
         let classicalRating = document.createElement('p')
         classicalRating.textContent = `Classical Rating: ${data[0].perfs.classical.rating}`
 
-        userStats.append(name, blitzRating, rapidRating, classicalRating)
+        let h3 = document.createElement('h3')
+        h3.textContent = "Recent Games"
+
+        userStats.append(name, blitzRating, rapidRating, classicalRating, h3)
     })
 }
 
@@ -94,9 +97,6 @@ function displayUserGames(e) {
         return JSON.parse(str)
     })
     .then(games => {
-        let h3 = document.createElement('h3')
-        h3.textContent = "Recent Games"
-        userGames.appendChild(h3)
         games.forEach(game => {
             let gameObj = {
                 number: games.indexOf(game),
@@ -154,7 +154,6 @@ function displayGame(gameObj) {
 
     let gameTitle = document.createElement('p')
     gameTitle.textContent = `${gameObj.whiteUser} vs. ${gameObj.blackUser} (${result})`
-    gameTitle.className = 'title'
     userGames.appendChild(gameTitle)
 
     gameTitle.addEventListener('click', function () {
@@ -166,6 +165,24 @@ function displayGame(gameObj) {
 
     if (gameObj.number === 0) {
         gameTitle.click()
+        gameTitle.className = 'selected'
+    }
+}
+
+function navigateGames(e) {
+    let selected = document.querySelector('.selected')
+    if (e.code === 'ArrowDown') {
+        if (selected.nextSibling) {
+            selected.className = ''
+            selected.nextSibling.click()
+            selected.nextSibling.className = 'selected'
+        }
+    } else if (e.code === 'ArrowUp') {
+        if (selected.previousSibling) {
+            selected.className = ''
+            selected.previousSibling.click()
+            selected.previousSibling.className = 'selected'
+        } 
     }
 }
 
@@ -173,3 +190,4 @@ function displayGame(gameObj) {
 form.addEventListener('submit', searchUser)
 toggle.addEventListener('click', toggleForm)
 openingForm.addEventListener('submit', searchOpenings)
+document.addEventListener('keyup', navigateGames)

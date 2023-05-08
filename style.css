@@ -30,6 +30,10 @@ main {
     cursor: pointer;
 }
 
+.selected {
+    background-color: lightsteelblue;
+}
+
 iframe {
     width:600px;
     height: 397px;
