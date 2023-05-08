@@ -72,11 +72,21 @@ function displayUserGames(e) {
         h3.textContent = "Recent Games"
         userGames.appendChild(h3)
         games.forEach(game => {
+            let result
+            if (game.winner === 'white') {
+                result = '1-0'
+            } else if (game.winner === 'black') {
+                result = '0-1'
+            } else if (game.winner === undefined) {
+                result = '\u00BD - \u00BD'
+            }
+
             let gameTitle = document.createElement('p')
-            gameTitle.textContent = `${game.players.white.user.name} vs. ${game.players.black.user.name}`
+            gameTitle.textContent = `${game.players.white.user.name} vs. ${game.players.black.user.name} (${result})`
             userGames.appendChild(gameTitle)
 
             gameTitle.addEventListener('click', function () {
+                gameDisplay.innerHTML = ''
                 let display = document.createElement('iframe')
                 display.src = `https://lichess.org/embed/game/${game.id}?theme=auto&bg=auto`
                 gameDisplay.appendChild(display)
