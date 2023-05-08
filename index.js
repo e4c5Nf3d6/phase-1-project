@@ -98,25 +98,13 @@ function displayUserGames(e) {
         h3.textContent = "Recent Games"
         userGames.appendChild(h3)
         games.forEach(game => {
-            let result
-            if (game.winner === 'white') {
-                result = '1-0'
-            } else if (game.winner === 'black') {
-                result = '0-1'
-            } else if (game.winner === undefined) {
-                result = '\u00BD - \u00BD'
+            let gameObj = {
+                winner: game.winner,
+                whiteUser: game.players.white.user.name,
+                blackUser: game.players.black.user.name,
+                id: game.id
             }
-
-            let gameTitle = document.createElement('p')
-            gameTitle.textContent = `${game.players.white.user.name} vs. ${game.players.black.user.name} (${result})`
-            userGames.appendChild(gameTitle)
-
-            gameTitle.addEventListener('click', function () {
-                gameDisplay.innerHTML = ''
-                let display = document.createElement('iframe')
-                display.src = `https://lichess.org/embed/game/${game.id}?theme=auto&bg=auto`
-                gameDisplay.appendChild(display)
-            })
+            displayGame(gameObj)
         })
     })
 }
@@ -141,26 +129,36 @@ function displayUserOpenings(e) {
         h3.textContent = "Recent Games"
         userGames.appendChild(h3)
         array[0].recentGames.forEach(game => {
-            let result
-            if (game.winner === 'white') {
-                result = '1-0'
-            } else if (game.winner === 'black') {
-                result = '0-1'
-            } else if (game.winner === null) {
-                result = '\u00BD - \u00BD'
+            let gameObj = {
+                winner: game.winner,
+                whiteUser: game.white.name,
+                blackUser: game.black.name,
+                id: game.id
             }
-
-            let gameTitle = document.createElement('p')
-            gameTitle.textContent = `${game.white.name} vs. ${game.black.name} (${result})`
-            userGames.appendChild(gameTitle)
-
-            gameTitle.addEventListener('click', function () {
-                gameDisplay.innerHTML = ''
-                let display = document.createElement('iframe')
-                display.src = `https://lichess.org/embed/game/${game.id}?theme=auto&bg=auto`
-                gameDisplay.appendChild(display)
-            })
+            displayGame(gameObj)
         })  
+    })
+}
+
+function displayGame(gameObj) {
+    let result
+    if (gameObj.winner === 'white') {
+        result = '1-0'
+    } else if (gameObj.winner === 'black') {
+        result = '0-1'
+    } else if (gameObj.winner === undefined || gameObj.winner === null) {
+        result = '\u00BD - \u00BD'
+    }
+
+    let gameTitle = document.createElement('p')
+    gameTitle.textContent = `${gameObj.whiteUser} vs. ${gameObj.blackUser} (${result})`
+    userGames.appendChild(gameTitle)
+
+    gameTitle.addEventListener('click', function () {
+        gameDisplay.innerHTML = ''
+        let display = document.createElement('iframe')
+        display.src = `https://lichess.org/embed/game/${gameObj.id}?theme=auto&bg=auto`
+        gameDisplay.appendChild(display)
     })
 }
 
