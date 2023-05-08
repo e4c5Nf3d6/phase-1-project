@@ -133,7 +133,7 @@ function displayUserOpenings(e) {
     })
     .then(res => res.text())
     .then(data => {
-        let str = "[" + data.replace(/\r?\n/g, ",").replace(/,\s*$/, "") + "]"
+        let str = "[" + data + "]"
         return JSON.parse(str)
     })
     .then(array => {
