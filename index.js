@@ -132,11 +132,36 @@ function displayUserOpenings(e) {
         }
     })
     .then(res => res.text())
-    .then(body => {
-        let str = "[" + body.replace(/\r?\n/g, ",").replace(/,\s*$/, "") + "]"
+    .then(data => {
+        let str = "[" + data.replace(/\r?\n/g, ",").replace(/,\s*$/, "") + "]"
         return JSON.parse(str)
     })
-    .then(data => console.log(data))
+    .then(array => {
+        let h3 = document.createElement('h3')
+        h3.textContent = "Recent Games"
+        userGames.appendChild(h3)
+        array[0].recentGames.forEach(game => {
+            let result
+            if (game.winner === 'white') {
+                result = '1-0'
+            } else if (game.winner === 'black') {
+                result = '0-1'
+            } else if (game.winner === null) {
+                result = '\u00BD - \u00BD'
+            }
+
+            let gameTitle = document.createElement('p')
+            gameTitle.textContent = `${game.white.name} vs. ${game.black.name} (${result})`
+            userGames.appendChild(gameTitle)
+
+            gameTitle.addEventListener('click', function () {
+                gameDisplay.innerHTML = ''
+                let display = document.createElement('iframe')
+                display.src = `https://lichess.org/embed/game/${game.id}?theme=auto&bg=auto`
+                gameDisplay.appendChild(display)
+            })
+        })  
+    })
 }
 
 // Event Listeners
