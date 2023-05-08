@@ -1,3 +1,6 @@
+body {
+    font-family: 'Roboto', sans-serif;}
+
 header {
     text-align: center;
     margin: 50px
@@ -12,6 +15,10 @@ main {
     border: solid 2px black;
     padding-left: 10px;
     padding-right: 10px;
+}
+
+#user-games p {
+    cursor: pointer;
 }
 
 iframe {
