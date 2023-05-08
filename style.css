@@ -1,0 +1,13 @@
+header {
+    text-align: center;
+    margin: 50px
+}
+
+main {
+	display: grid;
+	grid-template-columns: 3fr 6fr
+}
+
+#user-info {
+    border: solid 2px black
+}
