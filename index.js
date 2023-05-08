@@ -2,6 +2,7 @@
 let form = document.querySelector("#user-search")
 let userGames = document.querySelector("#user-games")
 let userStats = document.querySelector("#user-stats")
+let gameDisplay = document.querySelector("#game-details")
 
 // Functions
 function searchUser(e) {
@@ -35,6 +36,7 @@ function displayUserStats(e) {
         let link = document.createElement('a')
         link.href = data[0].url
         link.textContent = data[0].username
+        link.target = '_blank'
 
         name.append(link)
 
@@ -73,6 +75,13 @@ function displayUserGames(e) {
             let gameTitle = document.createElement('p')
             gameTitle.textContent = `${game.players.white.user.name} vs. ${game.players.black.user.name}`
             userGames.appendChild(gameTitle)
+
+            gameTitle.addEventListener('click', function () {
+                let display = document.createElement('iframe')
+                display.src = `https://lichess.org/embed/game/${game.id}?theme=auto&bg=auto`
+                gameDisplay.appendChild(display)
+                console.log(game)
+            })
         })
     })
 }

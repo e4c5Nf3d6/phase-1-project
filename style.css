@@ -13,3 +13,8 @@ main {
     padding-left: 10px;
     padding-right: 10px;
 }
+
+iframe {
+    width:600px;
+    height: 397px 
+}
