@@ -8,15 +8,16 @@
     <body>
         <header>
             <h1>Lichess Search</h1>
-            <form>
+            <form id="user-search">
                 <label for="username">Find a Lichess User</label> <br><br>
-                <input type="text" name="username" placeholder="Enter Username" required/>
-                <input type="submit" value="Search" />
+                <input type="text" id="username" name="username" placeholder="Enter Username" required/>
+                <input type="submit" id="submit" value="Search" />
             </form>
         </header>
         <main>
             <section id="user-info">
-
+                <div id="user-stats"></div>
+                <div id="user-games"></div>
             </section>
             <section id="game-details">
 
