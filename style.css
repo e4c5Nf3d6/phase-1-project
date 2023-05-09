@@ -7,6 +7,15 @@ header {
     margin: 50px;
 }
 
+.submit {
+    background-color: rgb(49, 116, 204);
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    margin: 10px;
+    cursor: pointer;
+}
+
 aside {
     padding: 10px;
     color: darkred;
@@ -37,8 +46,17 @@ main {
 }
 
 .selected {
-    background-color: lightsteelblue;
+    background-color: rgb(171, 193, 221);
     padding: 10px;
+}
+
+#toggle-form {
+    background-color: rgb(29, 105, 205);
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    margin: 10px;
+    cursor: pointer;
 }
 
 iframe {
