@@ -114,6 +114,17 @@ function displayUserOpenings(e) {
     let username = document.querySelector('#username-display').textContent
     let color = document.querySelector('#color').value
     let play = document.querySelector('#play').value
+
+    let openingHeader = document.createElement('h4')
+    let openings = document.querySelector('#play').querySelectorAll('option')
+    for (let opening of openings) {
+        if (opening.value === play) {
+            openingHeader.textContent = `Opening: ${opening.textContent}`
+        }
+    }
+
+    userGames.appendChild(openingHeader)
+    
     fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}&recentGames=5`, {
         method: 'GET',
         headers: {
@@ -126,9 +137,6 @@ function displayUserOpenings(e) {
         return JSON.parse(str)
     })
     .then(array => {
-        let h3 = document.createElement('h3')
-        h3.textContent = "Recent Games"
-        userGames.appendChild(h3)
         array[0].recentGames.forEach(game => {
             let gameObj = {
                 number: array[0].recentGames.indexOf(game),
