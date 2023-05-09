@@ -6,6 +6,7 @@ let userStats = document.querySelector("#user-stats")
 let gameDisplay = document.querySelector("#game-details")
 let toggle = document.querySelector("#toggle-form")
 let userInfo = document.querySelector("#user-info")
+let errorBox = document.querySelector('#error')
 
 // Functions
 function toggleForm(e) {
@@ -19,17 +20,18 @@ function toggleForm(e) {
 }
 
 function searchUser(e) {
+    toggle.className = 'hidden'
+    userInfo.className = 'hidden'
+
     e.preventDefault()
 
     userStats.innerHTML = ''
     userGames.innerHTML = ''
     gameDisplay.innerHTML = ''
+    errorBox.innerHTML = ''
     
     displayUserStats(e)
     displayUserGames(e)
-    toggle.className = 'visible'
-    userInfo.className = 'visible'
-
 
     form.reset()
 }
@@ -60,26 +62,34 @@ function displayUserStats(e) {
         return JSON.parse(str)
     })
     .then(data => {
-        
-        let name = document.createElement('h2')
-        let link = document.createElement('a')
-        link.id = 'username-display'
-        link.href = data[0].url
-        link.textContent = data[0].username
-        link.target = '_blank'
+        if (data[0].url) {
+            let name = document.createElement('h2')
+            let link = document.createElement('a')
+            link.id = 'username-display'
+            link.href = data[0].url
+            link.textContent = data[0].username
+            link.target = '_blank'
 
-        name.append(link)
+            name.append(link)
 
-        let blitzRating = document.createElement('p')
-        blitzRating.textContent = `Blitz Rating: ${data[0].perfs.blitz.rating}`
+            let blitzRating = document.createElement('p')
+            blitzRating.textContent = `Blitz Rating: ${data[0].perfs.blitz.rating}`
 
-        let rapidRating = document.createElement('p')
-        rapidRating.textContent = `Rapid Rating: ${data[0].perfs.rapid.rating}`
+            let rapidRating = document.createElement('p')
+            rapidRating.textContent = `Rapid Rating: ${data[0].perfs.rapid.rating}`
 
-        let classicalRating = document.createElement('p')
-        classicalRating.textContent = `Classical Rating: ${data[0].perfs.classical.rating}`
+            let classicalRating = document.createElement('p')
+            classicalRating.textContent = `Classical Rating: ${data[0].perfs.classical.rating}`
 
-        userStats.append(name, blitzRating, rapidRating, classicalRating)
+            userStats.append(name, blitzRating, rapidRating, classicalRating)
+
+            toggle.className = 'visible'
+            userInfo.className = 'visible'        
+        } else {
+            errorBox.textContent = `It looks like ${username} doesn't like to play chess.`
+            toggle.className = 'hidden'
+            userInfo.className = 'hidden'
+        }
     })
 }
 
