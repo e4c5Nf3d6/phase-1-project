@@ -5,6 +5,7 @@ let userGames = document.querySelector("#user-games")
 let userStats = document.querySelector("#user-stats")
 let gameDisplay = document.querySelector("#game-details")
 let toggle = document.querySelector("#toggle-form")
+let userInfo = document.querySelector("#user-info")
 
 // Functions
 function toggleForm(e) {
@@ -27,6 +28,8 @@ function searchUser(e) {
     displayUserStats(e)
     displayUserGames(e)
     toggle.className = 'visible'
+    userInfo.className = 'visible'
+
 
     form.reset()
 }
@@ -76,10 +79,7 @@ function displayUserStats(e) {
         let classicalRating = document.createElement('p')
         classicalRating.textContent = `Classical Rating: ${data[0].perfs.classical.rating}`
 
-        let h3 = document.createElement('h3')
-        h3.textContent = "Recent Games"
-
-        userStats.append(name, blitzRating, rapidRating, classicalRating, h3)
+        userStats.append(name, blitzRating, rapidRating, classicalRating)
     })
 }
 
@@ -138,7 +138,8 @@ function displayUserOpenings(e) {
                 id: game.id
             }
             displayGame(gameObj)
-        })  
+        })
+        toggle.click()
     })
 }
 
@@ -158,14 +159,19 @@ function displayGame(gameObj) {
 
     gameTitle.addEventListener('click', function () {
         gameDisplay.innerHTML = ''
+        let header = document.createElement('h2')
+        header.textContent = gameTitle.textContent
         let display = document.createElement('iframe')
         display.src = `https://lichess.org/embed/game/${gameObj.id}?theme=auto&bg=auto`
-        gameDisplay.appendChild(display)
+        gameDisplay.append(header, display)
+        document.querySelectorAll('.selected').forEach(title => {
+            title.className = ''
+        })
+        gameTitle.className = 'selected'
     })
 
     if (gameObj.number === 0) {
         gameTitle.click()
-        gameTitle.className = 'selected'
     }
 }
 
@@ -186,8 +192,16 @@ function navigateGames(e) {
     }
 }
 
+function preventScrolling(e) {
+    if(["ArrowUp", "ArrowDown"].includes(e.code)) {
+        e.preventDefault();
+    }
+}
+
 // Event Listeners
 form.addEventListener('submit', searchUser)
 toggle.addEventListener('click', toggleForm)
 openingForm.addEventListener('submit', searchOpenings)
 document.addEventListener('keyup', navigateGames)
+window.addEventListener("keydown", preventScrolling)
+
