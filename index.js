@@ -122,7 +122,6 @@ function displayUserOpenings(e) {
             openingHeader.textContent = `Opening: ${opening.textContent}`
         }
     }
-
     userGames.appendChild(openingHeader)
     
     fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}&recentGames=5`, {
@@ -137,17 +136,28 @@ function displayUserOpenings(e) {
         return JSON.parse(str)
     })
     .then(array => {
-        array[0].recentGames.forEach(game => {
-            let gameObj = {
-                number: array[0].recentGames.indexOf(game),
-                winner: game.winner,
-                whiteUser: game.white.name,
-                blackUser: game.black.name,
-                id: game.id
+        if (array[0].recentGames.length > 0) {
+            array[0].recentGames.forEach(game => {
+                let gameObj = {
+                    number: array[0].recentGames.indexOf(game),
+                    winner: game.winner,
+                    whiteUser: game.white.name,
+                    blackUser: game.black.name,
+                    id: game.id
+                }
+                displayGame(gameObj)
+            })
+            toggle.click()
+        } else { 
+            let errorMessage = document.createElement('p')
+            let openings = document.querySelector('#play').querySelectorAll('option')
+            for (let opening of openings) {
+                if (opening.value === play) {
+                    errorMessage.textContent = `It looks like ${username} doesn't like to play the ${opening.textContent} as ${color}.`
+                }
             }
-            displayGame(gameObj)
-        })
-        toggle.click()
+            userGames.appendChild(errorMessage)
+        }
     })
 }
 
