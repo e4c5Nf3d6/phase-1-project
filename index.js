@@ -26,7 +26,6 @@ function searchUser(e) {
     e.preventDefault()
 
     userStats.innerHTML = ''
-    userGames.innerHTML = ''
     gameDisplay.innerHTML = ''
     errorBox.innerHTML = ''
     
@@ -91,7 +90,14 @@ function displayUserStats(e) {
 }
 
 function displayUserGames(e) {
-    let username = e.target.querySelector('#username').value
+    userGames.innerHTML = ''
+    let username
+    if (e.type === 'submit') {
+        username = e.target.querySelector('#username').value
+    } else if (e.type === 'click') {
+        username = document.querySelector('#username-display').textContent
+    }
+
     fetch(`https://lichess.org/api/games/user/${username}?max=5`, {
         method: 'GET',
         headers: {
@@ -130,6 +136,11 @@ function displayUserOpenings(e) {
         }
     }
     userGames.appendChild(openingHeader)
+
+    let clearBtn = document.createElement('button')
+    clearBtn.textContent = 'Clear Filter'
+    clearBtn.addEventListener('click', displayUserGames)
+    userGames.appendChild(clearBtn)
     
     fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}&recentGames=5`, {
         method: 'GET',
