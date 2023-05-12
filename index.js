@@ -98,7 +98,7 @@ function displayUserGames(e) {
         username = document.querySelector('#username-display').textContent
     }
 
-    fetch(`https://lichess.org/api/games/user/${username}?max=5`, {
+    fetch(`https://lichess.org/api/games/user/${username}?max=8`, {
         method: 'GET',
         headers: {
             'Accept': "application/x-ndjson"
@@ -128,36 +128,28 @@ function displayUserOpenings(e) {
     let color = document.querySelector('#color').value
     let play = document.querySelector('#play').value
 
-    let openingHeader = document.createElement('h4')
-    let openings = document.querySelector('#play').querySelectorAll('option')
-    for (let opening of openings) {
-        if (opening.value === play) {
-            openingHeader.textContent = `Opening: ${opening.textContent}`
-        }
-    }
-    userGames.appendChild(openingHeader)
-
     let clearBtn = document.createElement('button')
     clearBtn.textContent = 'Clear Filter'
     clearBtn.addEventListener('click', displayUserGames)
     userGames.appendChild(clearBtn)
     
-    fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}&recentGames=5`, {
+    fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}`, {
         method: 'GET',
         headers: {
-            'Accept': "application/x-ndjson"
+            'Accept': "application/json"
         }
     })
-    .then(res => res.text())
+    .then(res => res.json())
     .then(data => {
-        let str = "[" + data + "]"
-        return JSON.parse(str)
-    })
-    .then(array => {
-        if (array[0].recentGames.length > 0) {
-            array[0].recentGames.forEach(game => {
+        let openingHeader = document.createElement('h4')
+        openingHeader.textContent = `Opening: ${data.opening.name}`
+        userGames.appendChild(openingHeader)
+
+        if (data.recentGames.length > 0) {
+            console.log(data)
+            data.recentGames.forEach(game => {
                 let gameObj = {
-                    number: array[0].recentGames.indexOf(game),
+                    number: data.recentGames.indexOf(game),
                     winner: game.winner,
                     whiteUser: game.white.name,
                     blackUser: game.black.name,
@@ -168,12 +160,7 @@ function displayUserOpenings(e) {
             toggle.click()
         } else { 
             let errorMessage = document.createElement('aside')
-            let openings = document.querySelector('#play').querySelectorAll('option')
-            for (let opening of openings) {
-                if (opening.value === play) {
-                    errorMessage.textContent = `It looks like ${username} doesn't like to play the ${opening.textContent} as ${color}.`
-                }
-            }
+            errorMessage.textContent = `It looks like ${username} doesn't like to play the ${data.opening.name} as ${color}.`
             userGames.appendChild(errorMessage)
             toggle.click()
         }
@@ -241,4 +228,3 @@ toggle.addEventListener('click', toggleForm)
 openingForm.addEventListener('submit', searchOpenings)
 document.addEventListener('keyup', navigateGames)
 window.addEventListener("keydown", preventScrolling)
-
