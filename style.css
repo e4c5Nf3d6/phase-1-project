@@ -12,7 +12,7 @@ header {
     border: none;
     color: white;
     padding: 5px 10px;
-    margin: 10px;
+    margin-bottom: 10px;
     cursor: pointer;
 }
 
@@ -57,6 +57,7 @@ main {
     padding: 10px 15px;
     margin: 10px;
     cursor: pointer;
+    font-size: 15px;
 }
 
 iframe {
