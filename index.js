@@ -1,20 +1,20 @@
 // Definitions
 let form = document.querySelector("#user-search")
-let openingForm = document.querySelector("#opening-search")
-let userGames = document.querySelector("#user-games")
-let userStats = document.querySelector("#user-stats")
-let gameDisplay = document.querySelector("#game-details")
-let toggle = document.querySelector("#toggle-form")
-let userInfo = document.querySelector("#user-info")
 let errorBox = document.querySelector('#error')
+let userInfo = document.querySelector("#user-info")
+let userStats = document.querySelector("#user-stats")
+let userGames = document.querySelector("#user-games")
+let gameDisplay = document.querySelector("#game-details")
 let gamesErrorBox = document.querySelector('#games-error')
+let toggle = document.querySelector("#toggle-form")
+let openingForm = document.querySelector("#opening-search")
 
 // Functions
 function searchUser(e) {
+    e.preventDefault()
+
     toggle.className = 'hidden'
     userInfo.className = 'hidden'
-
-    e.preventDefault()
 
     userStats.innerHTML = ''
     gameDisplay.innerHTML = ''
@@ -38,49 +38,6 @@ function searchOpenings(e) {
     openingForm.reset()
 }
 
-// function displayUserStats(e) {
-//     let username = e.target.querySelector('#username').value
-    
-//     fetch(`https://lichess.org/api/user/${username}`, {
-//         method: 'GET',
-//         headers: {
-//             'Accept': "application/x-ndjson"
-//         }
-//     })
-//     .then(res => res.text())
-//     .then(body => {
-//         let str = "[" + body.replace(/\r?\n/g, ",").replace(/,\s*$/, "") + "]"
-//         return JSON.parse(str)
-//     })
-//     .then(data => {
-//         let name = document.createElement('h2')
-//         let link = document.createElement('a')
-//         link.id = 'username-display'
-//         link.href = data[0].url
-//         link.textContent = data[0].username
-//         link.target = '_blank'
-
-//         name.append(link)
-
-//         let blitzRating = document.createElement('p')
-//         blitzRating.textContent = `Blitz Rating: ${data[0].perfs.blitz.rating}`
-
-//         let rapidRating = document.createElement('p')
-//         rapidRating.textContent = `Rapid Rating: ${data[0].perfs.rapid.rating}`
-
-//         let classicalRating = document.createElement('p')
-//         classicalRating.textContent = `Classical Rating: ${data[0].perfs.classical.rating}`
-
-//         userStats.append(name, blitzRating, rapidRating, classicalRating)
-
-//         toggle.className = 'visible'
-//         userInfo.className = 'visible'        
-//     })
-//     .catch(error => {
-//         errorBox.textContent = `It looks like ${username} doesn't like to play chess.`
-//     })
-// }
-
 function displayUserStats(e) {
     let username = e.target.querySelector('#username').value
     
@@ -101,21 +58,49 @@ function displayUserStats(e) {
 
         name.append(link)
 
-        let blitzRating = document.createElement('p')
-        blitzRating.textContent = `Blitz Rating: ${user.perfs.blitz.rating}`
+        console.log(user.perfs)
 
-        let rapidRating = document.createElement('p')
-        rapidRating.textContent = `Rapid Rating: ${user.perfs.rapid.rating}`
+        let ratingsHeader = document.createElement('h3')
+        ratingsHeader.textContent = 'Ratings'
 
-        let classicalRating = document.createElement('p')
-        classicalRating.textContent = `Classical Rating: ${user.perfs.classical.rating}`
+        let ratingsList = document.createElement('ul')
 
-        userStats.append(name, blitzRating, rapidRating, classicalRating)
+        if (user.perfs.bullet.games > 0) {
+            let bulletRating = document.createElement('li')
+            bulletRating.textContent = `Bullet: ${user.perfs.bbullet.rating}`
+            ratingsList.append(bulletRating)
+        }
+
+        if (user.perfs.blitz.games > 0) {
+            let blitzRating = document.createElement('li')
+            blitzRating.textContent = `Blitz: ${user.perfs.blitz.rating}`
+            ratingsList.append(blitzRating)
+        }
+
+        if (user.perfs.rapid.games > 0) {
+            let rapidRating = document.createElement('li')
+            rapidRating.textContent = `Rapid: ${user.perfs.rapid.rating}`
+            ratingsList.append(rapidRating)
+        }
+
+        if (user.perfs.classical.games > 0) {
+            let classicalRating = document.createElement('li')
+            classicalRating.textContent = `Classical: ${user.perfs.classical.rating}`
+            ratingsList.append(classicalRating)
+        }
+
+        if (user.perfs.correspondence.games > 0) {
+            let correspondenceRating = document.createElement('li')
+            correspondenceRating.textContent = `Correspondence: ${user.perfs.correspondence.rating}`
+            ratingsList.append(correspondenceRating)
+        }
+
+        userStats.append(name, ratingsHeader, ratingsList)
 
         toggle.className = 'visible'
         userInfo.className = 'visible'        
     })
-    .catch(error => {
+    .catch(() => {
         errorBox.textContent = `It looks like ${username} doesn't like to play chess.`
     })
 }
