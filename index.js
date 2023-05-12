@@ -82,7 +82,9 @@ function displayUserStats(e) {
 }
 
 function displayUserGames(e) {
+    gamesErrorBox.textContent = ''
     userGames.innerHTML = ''
+    
     let username
     if (e.type === 'submit') {
         username = e.target.querySelector('#username').value
@@ -120,6 +122,8 @@ function displayUserGames(e) {
 }
 
 function displayUserOpenings(e) {
+    gamesErrorBox.textContent = ''
+    
     let username = document.querySelector('#username-display').textContent
     let color = document.querySelector('#color').value
     let play = document.querySelector('#play').value
@@ -129,8 +133,15 @@ function displayUserOpenings(e) {
     clearBtn.textContent = 'Clear Filter'
     clearBtn.addEventListener('click', displayUserGames)
     userGames.appendChild(clearBtn)
+
+    const controller = new AbortController()
+    const timeout = setTimeout(() => {
+        controller.abort()
+        gamesErrorBox.textContent = `Looks like something went wrong. Please try again.`
+      }, 2000)
     
     fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}`, {
+        signal: controller.signal,
         method: 'GET',
         headers: {
             'Accept': "application/json"
@@ -138,6 +149,7 @@ function displayUserOpenings(e) {
     })
     .then(res => res.json())
     .then(data => {
+        clearTimeout(timeout)
         let openingHeader = document.createElement('h4')
         openingHeader.textContent = `Opening: ${data.opening.name}`
         userGames.appendChild(openingHeader)
@@ -160,9 +172,6 @@ function displayUserOpenings(e) {
             userGames.appendChild(errorMessage)
             toggle.click()
         }
-    })
-    .catch(error => {
-        console.log(error)
     })
 }
 
