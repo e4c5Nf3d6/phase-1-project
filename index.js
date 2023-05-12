@@ -7,18 +7,9 @@ let gameDisplay = document.querySelector("#game-details")
 let toggle = document.querySelector("#toggle-form")
 let userInfo = document.querySelector("#user-info")
 let errorBox = document.querySelector('#error')
+let gamesErrorBox = document.querySelector('#games-error')
 
 // Functions
-function toggleForm(e) {
-    if (e.target.textContent === 'Filter by Opening') {
-        openingForm.className = 'visible'
-        e.target.textContent = 'Collapse'
-    } else if (e.target.textContent === 'Collapse') {
-        openingForm.className = 'hidden'
-        e.target.textContent = 'Filter by Opening'
-    }
-}
-
 function searchUser(e) {
     toggle.className = 'hidden'
     userInfo.className = 'hidden'
@@ -28,6 +19,7 @@ function searchUser(e) {
     userStats.innerHTML = ''
     gameDisplay.innerHTML = ''
     errorBox.innerHTML = ''
+    gamesErrorBox.innerHTML = ''
     
     displayUserStats(e)
     displayUserGames(e)
@@ -110,16 +102,20 @@ function displayUserGames(e) {
         return JSON.parse(str)
     })
     .then(games => {
-        games.forEach(game => {
-            let gameObj = {
-                number: games.indexOf(game),
-                winner: game.winner,
-                whiteUser: game.players.white.user.name,
-                blackUser: game.players.black.user.name,
-                id: game.id
-            }
-            displayGame(gameObj)
-        })
+        if (games.length > 0) {
+            games.forEach(game => {
+                let gameObj = {
+                    number: games.indexOf(game),
+                    winner: game.winner,
+                    whiteUser: game.players.white.user.name,
+                    blackUser: game.players.black.user.name,
+                    id: game.id
+                }
+                displayGame(gameObj)
+            })
+        } else {
+            gamesErrorBox.textContent = `It looks like ${username} hasn't played any games recently.`
+        }
     })
 }
 
@@ -129,6 +125,7 @@ function displayUserOpenings(e) {
     let play = document.querySelector('#play').value
 
     let clearBtn = document.createElement('button')
+    clearBtn.className = 'button'
     clearBtn.textContent = 'Clear Filter'
     clearBtn.addEventListener('click', displayUserGames)
     userGames.appendChild(clearBtn)
@@ -146,7 +143,6 @@ function displayUserOpenings(e) {
         userGames.appendChild(openingHeader)
 
         if (data.recentGames.length > 0) {
-            console.log(data)
             data.recentGames.forEach(game => {
                 let gameObj = {
                     number: data.recentGames.indexOf(game),
@@ -164,6 +160,9 @@ function displayUserOpenings(e) {
             userGames.appendChild(errorMessage)
             toggle.click()
         }
+    })
+    .catch(error => {
+        console.log(error)
     })
 }
 
@@ -196,6 +195,16 @@ function displayGame(gameObj) {
 
     if (gameObj.number === 0) {
         gameTitle.click()
+    }
+}
+
+function toggleForm(e) {
+    if (e.target.textContent === 'Filter by Opening') {
+        openingForm.className = 'visible'
+        e.target.textContent = 'Collapse'
+    } else if (e.target.textContent === 'Collapse') {
+        openingForm.className = 'hidden'
+        e.target.textContent = 'Filter by Opening'
     }
 }
 
