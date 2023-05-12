@@ -84,7 +84,7 @@ function displayUserStats(e) {
 function displayUserGames(e) {
     gamesErrorBox.textContent = ''
     userGames.innerHTML = ''
-    
+
     let username
     if (e.type === 'submit') {
         username = e.target.querySelector('#username').value
@@ -151,7 +151,7 @@ function displayUserOpenings(e) {
     .then(data => {
         clearTimeout(timeout)
         let openingHeader = document.createElement('h4')
-        openingHeader.textContent = `Opening: ${data.opening.name}`
+        openingHeader.textContent = `Opening: The ${data.opening.name} with the ${color[0].toUpperCase() + color.slice(1)} Pieces`
         userGames.appendChild(openingHeader)
 
         if (data.recentGames.length > 0) {
