@@ -34,6 +34,7 @@ function searchOpenings(e) {
 
 function displayUserStats(e) {
     clearUserInfo()
+    
     let username = e.target.querySelector('#username').value
     
     fetch(`https://lichess.org/api/user/${username}`, {
@@ -167,7 +168,7 @@ function listGamesByOpening() {
     const controller = new AbortController()
     const timeout = setTimeout(() => {
         controller.abort()
-        gamesErrorBox.textContent = `Looks like something went wrong. Please try again.`
+        gamesErrorBox.textContent = `It looks like something went wrong. Please try again.`
     }, 2000)
     
     fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}`, {
@@ -201,7 +202,7 @@ function listGamesByOpening() {
                 displayGame(gameObj)
             })
         } else { 
-            gamesErrorBox.textContent = `It looks like ${username} does not play the ${data.opening.name} with the ${color} pieces.`
+            gamesErrorBox.textContent = `It looks like ${username} has not played the ${data.opening.name} with the ${color} pieces.`
             gamesErrorBox.className = 'visible'
         }
 
@@ -229,21 +230,33 @@ function displayGame(gameObj) {
         let header = document.createElement('h2')
         header.textContent = gameTitle.textContent
 
-        let display = document.createElement('iframe')
-        display.src = `https://lichess.org/embed/game/${gameObj.id}?theme=auto&bg=auto`
+        let iframe = document.createElement('iframe')
+        iframe.src = `https://lichess.org/embed/game/${gameObj.id}?theme=auto&bg=auto`
 
-        gameDisplay.append(header, display)
+        gameDisplay.append(header, iframe)
 
         document.querySelectorAll('.selected').forEach(title => {
             title.className = ''
         })
-        
         gameTitle.className = 'selected'
     })
 
     if (gameObj.number === 0) {
         gameTitle.click()
     }
+}
+
+function clearUserInfo() {
+    errorBox.className = 'hidden'
+    userLink.innerHTML = ''
+    userStats.innerHTML = ''
+}
+
+function clearGames() {
+    gamesErrorBox.className = 'hidden'
+    clearFilterButton.className = 'hidden'
+    userGames.innerHTML = ''
+    gameDisplay.innerHTML = ''
 }
 
 function toggleForm() {
@@ -271,19 +284,6 @@ function navigateGames(e) {
             selected.previousSibling.className = 'selected'
         } 
     }
-}
-
-function clearUserInfo() {
-    errorBox.className = 'hidden'
-    userLink.innerHTML = ''
-    userStats.innerHTML = ''
-}
-
-function clearGames() {
-    gamesErrorBox.className = 'hidden'
-    clearFilterButton.className = 'hidden'
-    userGames.innerHTML = ''
-    gameDisplay.innerHTML = ''
 }
 
 function preventScrolling(e) {
