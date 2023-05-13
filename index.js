@@ -7,6 +7,7 @@ let userStats = document.querySelector("#user-stats")
 let userGames = document.querySelector("#user-games")
 let gameDisplay = document.querySelector("#game-details")
 let gamesErrorBox = document.querySelector('#games-error')
+let clearFilterButton = document.querySelector('#clear-filter')
 let toggle = document.querySelector("#toggle-form")
 let openingForm = document.querySelector("#opening-search")
 
@@ -14,18 +15,11 @@ let openingForm = document.querySelector("#opening-search")
 function searchUser(e) {
     e.preventDefault()
 
-    toggle.className = 'hidden'
     userInfo.className = 'hidden'
-
-    userLink.innerHTML = ''
-    userStats.innerHTML = ''
-    userGames.innerHTML = ''
-    gameDisplay.innerHTML = ''
-    errorBox.textContent = ''
-    gamesErrorBox.textContent = ''
+    toggle.className = 'hidden'
     
     displayUserStats(e)
-    displayUserGames(e)
+    listUserGames(e)
 
     form.reset()
 }
@@ -33,16 +27,13 @@ function searchUser(e) {
 function searchOpenings(e) {
     e.preventDefault()
 
-    userGames.innerHTML = ''
-    gameDisplay.innerHTML = ''
-    gamesErrorBox.textContent = ''
-
-    displayUserOpenings(e)
+    listGamesByOpening()
 
     openingForm.reset()
 }
 
 function displayUserStats(e) {
+    clearUserInfo()
     let username = e.target.querySelector('#username').value
     
     fetch(`https://lichess.org/api/user/${username}`, {
@@ -123,10 +114,12 @@ function displayUserStats(e) {
     })
     .catch(() => {
         errorBox.textContent = `It looks like ${username} doesn't like to play chess.`
+        errorBox.className = 'visible'
     })
 }
 
-function displayUserGames(e) {
+function listUserGames(e) {
+    clearGames()
 
     let username
     if (e.type === 'submit') {
@@ -160,28 +153,23 @@ function displayUserGames(e) {
             })
         } else {
             gamesErrorBox.textContent = `It looks like ${username} hasn't played any games.`
+            gamesErrorBox.className = 'visible'
         }
     })
 }
 
-function displayUserOpenings(e) {
-    gamesErrorBox.textContent = ''
-    
+function listGamesByOpening() {
+    clearGames()
+
     let username = document.querySelector('#username-display').textContent
     let color = document.querySelector('#color').value
     let play = document.querySelector('#play').value
-
-    let clearBtn = document.createElement('button')
-    clearBtn.className = 'button'
-    clearBtn.textContent = 'Clear Filter'
-    clearBtn.addEventListener('click', displayUserGames)
-    userGames.appendChild(clearBtn)
 
     const controller = new AbortController()
     const timeout = setTimeout(() => {
         controller.abort()
         gamesErrorBox.textContent = `Looks like something went wrong. Please try again.`
-      }, 2000)
+    }, 2000)
     
     fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}`, {
         signal: controller.signal,
@@ -193,9 +181,14 @@ function displayUserOpenings(e) {
     .then(res => res.json())
     .then(data => {
         clearTimeout(timeout)
-        let openingHeader = document.createElement('h4')
-        openingHeader.textContent = `Opening: The ${data.opening.name} with the ${color[0].toUpperCase() + color.slice(1)} Pieces`
-        userGames.appendChild(openingHeader)
+
+        let openingTitle = document.createElement('h4')
+        openingTitle.textContent = `Opening: The ${data.opening.name}`
+
+        let openingSubtitle = document.createElement('h5')
+        openingSubtitle.textContent = `${username} playing with the ${color[0].toUpperCase() + color.slice(1)} Pieces`
+
+        userGames.append(openingTitle, openingSubtitle)
 
         if (data.recentGames.length > 0) {
             data.recentGames.forEach(game => {
@@ -208,11 +201,12 @@ function displayUserOpenings(e) {
                 }
                 displayGame(gameObj)
             })
+            clearFilterButton.className = 'visible'
             toggle.click()
         } else { 
-            let errorMessage = document.createElement('aside')
-            errorMessage.textContent = `It looks like ${username} doesn't like to play the ${data.opening.name} as ${color}.`
-            userGames.appendChild(errorMessage)
+            gamesErrorBox.textContent = `It looks like ${username} does not play the ${data.opening.name} with the ${color} pieces.`
+            gamesErrorBox.className = 'visible'
+            clearFilterButton.className = 'visible'
             toggle.click()
         }
     })
@@ -253,8 +247,8 @@ function displayGame(gameObj) {
 function toggleForm(e) {
     if (e.target.textContent === 'Filter by Opening') {
         openingForm.className = 'visible'
-        e.target.textContent = 'Collapse'
-    } else if (e.target.textContent === 'Collapse') {
+        e.target.textContent = 'Hide Filter'
+    } else if (e.target.textContent === 'Hide Filter') {
         openingForm.className = 'hidden'
         e.target.textContent = 'Filter by Opening'
     }
@@ -277,6 +271,19 @@ function navigateGames(e) {
     }
 }
 
+function clearUserInfo() {
+    errorBox.className = 'hidden'
+    userLink.innerHTML = ''
+    userStats.innerHTML = ''
+}
+
+function clearGames() {
+    gamesErrorBox.className = 'hidden'
+    clearFilterButton.className = 'hidden'
+    userGames.innerHTML = ''
+    gameDisplay.innerHTML = ''
+}
+
 function preventScrolling(e) {
     if(["ArrowUp", "ArrowDown"].includes(e.code)) {
         e.preventDefault();
@@ -287,5 +294,6 @@ function preventScrolling(e) {
 form.addEventListener('submit', searchUser)
 toggle.addEventListener('click', toggleForm)
 openingForm.addEventListener('submit', searchOpenings)
+clearFilterButton.addEventListener('click', listUserGames)
 document.addEventListener('keyup', navigateGames)
 window.addEventListener("keydown", preventScrolling)

@@ -7,7 +7,7 @@ header {
     margin: 50px;
 }
 
-.button {
+input[type=submit] {
     background-color: rgb(49, 116, 204);
     border: none;
     color: white;
@@ -71,14 +71,24 @@ h3 {
     padding: 10px;
 }
 
-#toggle-form {
-    background-color: rgb(29, 105, 205);
+button {
+    background-color: rgb(49, 116, 204);
     border: none;
     color: white;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+#toggle-form {
+    background-color: #302e2c;
+    border: none;
+    color: #c6c5c5;
     padding: 10px 15px;
     margin: 10px;
     cursor: pointer;
     font-size: 15px;
+    font-weight: bold;
 }
 
 iframe {
