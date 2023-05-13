@@ -14,9 +14,6 @@ let openingForm = document.querySelector("#opening-search")
 // Functions
 function searchUser(e) {
     e.preventDefault()
-
-    userInfo.className = 'hidden'
-    toggle.className = 'hidden'
     
     displayUserStats(e)
     listUserGames(e)
@@ -250,6 +247,8 @@ function displayGame(gameObj) {
 }
 
 function clearUserInfo() {
+    userInfo.className = 'hidden'
+    toggle.className = 'hidden'
     errorBox.className = 'hidden'
     userLink.innerHTML = ''
     userStats.innerHTML = ''
@@ -278,13 +277,11 @@ function navigateGames(e) {
         if (selected.nextSibling) {
             selected.className = ''
             selected.nextSibling.click()
-            selected.nextSibling.className = 'selected'
         }
     } else if (e.code === 'ArrowUp') {
         if (selected.previousSibling) {
             selected.className = ''
             selected.previousSibling.click()
-            selected.previousSibling.className = 'selected'
         } 
     }
 }
