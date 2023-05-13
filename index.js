@@ -140,7 +140,6 @@ function listUserGames(e) {
         return data.trim().split('\n').map(game => JSON.parse(game))
     })
     .then(games => {
-        console.log(games)
         games.forEach(game => {
             if (game.players.white.user && game.players.black.user) {
                 let gameObj = {
@@ -172,6 +171,7 @@ function listGamesByOpening() {
     const timeout = setTimeout(() => {
         controller.abort()
         gamesErrorBox.textContent = `It looks like something went wrong. Please try again.`
+        gamesErrorBox.className = 'visible'
     }, 2000)
     
     fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}`, {
