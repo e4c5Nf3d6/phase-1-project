@@ -135,31 +135,30 @@ function listUserGames(e) {
         }
     })
     .then(res => res.text())
-    .then(body => {
-        let str = "[" + body.replace(/\r?\n/g, ",").replace(/,\s*$/, "") + "]"
-        return JSON.parse(str)
+    .then(data => {
+        return data.trim().split('\n').map(game => JSON.parse(game))
     })
     .then(games => {
-        if (games.length > 0) {
-            games.forEach(game => {
-                let gameObj = {
-                    number: games.indexOf(game),
-                    winner: game.winner,
-                    whiteUser: game.players.white.user.name,
-                    blackUser: game.players.black.user.name,
-                    id: game.id
-                }
-                displayGame(gameObj)
-            })
-        } else {
-            gamesErrorBox.textContent = `It looks like ${username} hasn't played any games.`
-            gamesErrorBox.className = 'visible'
-        }
+        games.forEach(game => {
+            let gameObj = {
+                number: games.indexOf(game),
+                winner: game.winner,
+                whiteUser: game.players.white.user.name,
+                blackUser: game.players.black.user.name,
+                id: game.id
+            }
+            displayGame(gameObj)
+        })
+    })
+    .catch(() => {
+        gamesErrorBox.textContent = `It looks like ${username} hasn't played any games.`
+        gamesErrorBox.className = 'visible'
     })
 }
 
 function listGamesByOpening() {
     clearGames()
+    toggleForm()
 
     let username = document.querySelector('#username-display').textContent
     let color = document.querySelector('#color').value
@@ -201,14 +200,12 @@ function listGamesByOpening() {
                 }
                 displayGame(gameObj)
             })
-            clearFilterButton.className = 'visible'
-            toggle.click()
         } else { 
             gamesErrorBox.textContent = `It looks like ${username} does not play the ${data.opening.name} with the ${color} pieces.`
             gamesErrorBox.className = 'visible'
-            clearFilterButton.className = 'visible'
-            toggle.click()
         }
+
+        clearFilterButton.className = 'visible'
     })
 }
 
@@ -228,14 +225,19 @@ function displayGame(gameObj) {
 
     gameTitle.addEventListener('click', function () {
         gameDisplay.innerHTML = ''
+
         let header = document.createElement('h2')
         header.textContent = gameTitle.textContent
+
         let display = document.createElement('iframe')
         display.src = `https://lichess.org/embed/game/${gameObj.id}?theme=auto&bg=auto`
+
         gameDisplay.append(header, display)
+
         document.querySelectorAll('.selected').forEach(title => {
             title.className = ''
         })
+        
         gameTitle.className = 'selected'
     })
 
@@ -244,13 +246,13 @@ function displayGame(gameObj) {
     }
 }
 
-function toggleForm(e) {
-    if (e.target.textContent === 'Filter by Opening') {
+function toggleForm() {
+    if (toggle.textContent === 'Filter by Opening') {
         openingForm.className = 'visible'
-        e.target.textContent = 'Hide Filter'
-    } else if (e.target.textContent === 'Hide Filter') {
+        toggle.textContent = 'Hide Filter'
+    } else if (toggle.textContent === 'Hide Filter') {
         openingForm.className = 'hidden'
-        e.target.textContent = 'Filter by Opening'
+        toggle.textContent = 'Filter by Opening'
     }
 }
 
