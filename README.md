@@ -4,7 +4,7 @@ Lichess Search is a single-page application that allows a user to search for Lic
 
 # Usage
 
-![Example GIF](media/ezgif-3-9c0aced506.gif)
+![Example GIF](media/example-gif.gif)
 
 # Acknowledgments
 
