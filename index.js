@@ -34,7 +34,7 @@ function searchOpenings(e) {
 
 function displayUserStats(e) {
     clearUserInfo()
-    
+
     let username = e.target.querySelector('#username').value
     
     fetch(`https://lichess.org/api/user/${username}`, {
@@ -140,15 +140,18 @@ function listUserGames(e) {
         return data.trim().split('\n').map(game => JSON.parse(game))
     })
     .then(games => {
+        console.log(games)
         games.forEach(game => {
-            let gameObj = {
-                number: games.indexOf(game),
-                winner: game.winner,
-                whiteUser: game.players.white.user.name,
-                blackUser: game.players.black.user.name,
-                id: game.id
+            if (game.players.white.user && game.players.black.user) {
+                let gameObj = {
+                    number: games.indexOf(game),
+                    winner: game.winner,
+                    whiteUser: game.players.white.user.name,
+                    blackUser: game.players.black.user.name,
+                    id: game.id
+                }
+                displayGame(gameObj)
             }
-            displayGame(gameObj)
         })
     })
     .catch(() => {
