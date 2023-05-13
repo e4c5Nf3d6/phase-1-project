@@ -2,6 +2,7 @@
 let form = document.querySelector("#user-search")
 let errorBox = document.querySelector('#error')
 let userInfo = document.querySelector("#user-info")
+let userLink = document.querySelector('#username-link')
 let userStats = document.querySelector("#user-stats")
 let userGames = document.querySelector("#user-games")
 let gameDisplay = document.querySelector("#game-details")
@@ -16,10 +17,12 @@ function searchUser(e) {
     toggle.className = 'hidden'
     userInfo.className = 'hidden'
 
+    userLink.innerHTML = ''
     userStats.innerHTML = ''
+    userGames.innerHTML = ''
     gameDisplay.innerHTML = ''
-    errorBox.innerHTML = ''
-    gamesErrorBox.innerHTML = ''
+    errorBox.textContent = ''
+    gamesErrorBox.textContent = ''
     
     displayUserStats(e)
     displayUserGames(e)
@@ -32,6 +35,7 @@ function searchOpenings(e) {
 
     userGames.innerHTML = ''
     gameDisplay.innerHTML = ''
+    gamesErrorBox.textContent = ''
 
     displayUserOpenings(e)
 
@@ -57,48 +61,65 @@ function displayUserStats(e) {
         link.target = '_blank'
 
         name.append(link)
-
-        console.log(user.perfs)
+        userLink.append(name)
 
         let ratingsHeader = document.createElement('h3')
         ratingsHeader.textContent = 'Ratings'
 
         let ratingsList = document.createElement('ul')
 
+        let hasRating = false
+
         if (user.perfs.bullet.games > 0) {
             let bulletRating = document.createElement('li')
-            bulletRating.textContent = `Bullet: ${user.perfs.bbullet.rating}`
+            bulletRating.textContent = `Bullet: ${user.perfs.bullet.rating}`
             ratingsList.append(bulletRating)
+            hasRating = true
         }
 
         if (user.perfs.blitz.games > 0) {
             let blitzRating = document.createElement('li')
             blitzRating.textContent = `Blitz: ${user.perfs.blitz.rating}`
             ratingsList.append(blitzRating)
+            hasRating = true
         }
 
         if (user.perfs.rapid.games > 0) {
             let rapidRating = document.createElement('li')
             rapidRating.textContent = `Rapid: ${user.perfs.rapid.rating}`
             ratingsList.append(rapidRating)
+            hasRating = true
         }
 
         if (user.perfs.classical.games > 0) {
             let classicalRating = document.createElement('li')
             classicalRating.textContent = `Classical: ${user.perfs.classical.rating}`
             ratingsList.append(classicalRating)
+            hasRating = true
         }
 
         if (user.perfs.correspondence.games > 0) {
             let correspondenceRating = document.createElement('li')
             correspondenceRating.textContent = `Correspondence: ${user.perfs.correspondence.rating}`
             ratingsList.append(correspondenceRating)
+            hasRating = true
         }
 
-        userStats.append(name, ratingsHeader, ratingsList)
+        if (user.perfs.puzzle) {
+            if (user.perfs.puzzle.games > 0) {
+                let puzzleRating = document.createElement('li')
+                puzzleRating.textContent = `Puzzles: ${user.perfs.puzzle.rating}`
+                ratingsList.append(puzzleRating)
+                hasRating = true
+            }
+        }
 
-        toggle.className = 'visible'
-        userInfo.className = 'visible'        
+        if (hasRating === true) {
+            userStats.append(ratingsHeader, ratingsList)
+            toggle.className = 'visible'
+        }
+
+        userInfo.className = 'visible'  
     })
     .catch(() => {
         errorBox.textContent = `It looks like ${username} doesn't like to play chess.`
@@ -106,8 +127,6 @@ function displayUserStats(e) {
 }
 
 function displayUserGames(e) {
-    gamesErrorBox.textContent = ''
-    userGames.innerHTML = ''
 
     let username
     if (e.type === 'submit') {
@@ -140,7 +159,7 @@ function displayUserGames(e) {
                 displayGame(gameObj)
             })
         } else {
-            gamesErrorBox.textContent = `It looks like ${username} hasn't played any games recently.`
+            gamesErrorBox.textContent = `It looks like ${username} hasn't played any games.`
         }
     })
 }
