@@ -167,15 +167,16 @@ function listGamesByOpening() {
     const controller = new AbortController()
     const timeout = setTimeout(() => {
         controller.abort()
-        gamesErrorBox.textContent = `It looks like something went wrong. Please try again.`
+        gamesErrorBox.textContent = `Something went wrong. Please try again.`
         gamesErrorBox.className = 'visible'
+        clearFilterButton.className = 'visible'
     }, 2000)
     
-    fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}`, {
+    fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}&recentGames<=8`, {
         signal: controller.signal,
         method: 'GET',
         headers: {
-            'Accept': "application/json"
+            'Accept': "application/nd-json"
         }
     })
     .then(res => res.json())
