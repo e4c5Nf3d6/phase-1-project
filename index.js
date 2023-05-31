@@ -151,7 +151,7 @@ function listUserGames(e) {
         })
     })
     .catch(() => {
-        gamesErrorBox.textContent = `It looks like ${username} hasn't played any games.`
+        gamesErrorBox.textContent = `${username} has not played any games.`
         gamesErrorBox.className = 'visible'
     })
 }
@@ -164,30 +164,43 @@ function listGamesByOpening() {
     let color = document.querySelector('#color').value
     let play = document.querySelector('#play').value
 
-    const controller = new AbortController()
-    const timeout = setTimeout(() => {
-        controller.abort()
-        gamesErrorBox.textContent = `Something went wrong. Please try again.`
-        gamesErrorBox.className = 'visible'
-        clearFilterButton.className = 'visible'
-    }, 2000)
+    const readStream = processLine => response => {
+        const stream = response.body.getReader()
+        const matcher = /\r?\n/
+        const decoder = new TextDecoder()
+        let buf = ''
+      
+        const loop = () =>
+            stream.read().then(({done, value}) => {
+                if (done) {
+                    if (buf.length > 0) processLine(JSON.parse(buf))
+                } else {
+                    const chunk = decoder.decode(value, {
+                        stream: true
+                    });
+                    buf += chunk
+      
+                    const parts = buf.split(matcher)
+                    buf = parts.pop()
+                    for (const i of parts.filter(p => p)) processLine(JSON.parse(i))
+                    return loop()
+                }
+            })
+        return loop()
+    }
     
     fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}&recentGames<=8`, {
-        signal: controller.signal,
         method: 'GET',
         headers: {
             'Accept': "application/nd-json"
         }
     })
-    .then(res => res.json())
-    .then(data => {
-        clearTimeout(timeout)
-
+    .then(readStream(data => {
         let openingTitle = document.createElement('h4')
         openingTitle.textContent = `Opening: The ${data.opening.name}`
 
         let openingSubtitle = document.createElement('h5')
-        openingSubtitle.textContent = `${username} playing with the ${color[0].toUpperCase() + color.slice(1)} Pieces`
+        openingSubtitle.textContent = `${username} with the ${color[0].toUpperCase() + color.slice(1)} Pieces`
 
         userGames.append(openingTitle, openingSubtitle)
 
@@ -203,12 +216,12 @@ function listGamesByOpening() {
                 displayGame(gameObj)
             })
         } else { 
-            gamesErrorBox.textContent = `It looks like ${username} has not played the ${data.opening.name} with the ${color} pieces.`
+            gamesErrorBox.textContent = `${username} has not played the ${data.opening.name} with the ${color} pieces.`
             gamesErrorBox.className = 'visible'
         }
 
         clearFilterButton.className = 'visible'
-    })
+    }))
 }
 
 function displayGame(gameObj) {
