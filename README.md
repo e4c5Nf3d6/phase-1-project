@@ -22,6 +22,6 @@ One of endpoints that I used streams its responses as NDJSON. [This post](https:
 - HTML
 - CSS
 
-## Acknowledgments
+## Acknowledgements
 
 - Thank you to Thibault Duplessis, founder of Lichess, for [code that reads an NDJSON stream](https://gist.github.com/ornicar/a097406810939cf7be1df8ea30e94f3e) and for creating a free, open-source chess server.
