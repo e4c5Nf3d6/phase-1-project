@@ -1,17 +1,25 @@
-// Definitions
+// Declarations
 let form = document.querySelector("#user-search")
 let errorBox = document.querySelector('#error')
 let userInfo = document.querySelector("#user-info")
 let userLink = document.querySelector('#username-link')
 let userStats = document.querySelector("#user-stats")
 let userGames = document.querySelector("#user-games")
-let gameDisplay = document.querySelector("#game-details")
 let gamesErrorBox = document.querySelector('#games-error')
 let clearFilterButton = document.querySelector('#clear-filter')
 let toggle = document.querySelector("#toggle-form")
 let openingForm = document.querySelector("#opening-search")
+let gameDisplay = document.querySelector("#game-details")
 
-// Functions
+// Event Listeners
+form.addEventListener('submit', searchUser)
+document.addEventListener('keyup', navigateGames)
+toggle.addEventListener('click', toggleForm)
+openingForm.addEventListener('submit', searchOpenings)
+clearFilterButton.addEventListener('click', listUserGames)
+window.addEventListener("keydown", preventScrolling)
+
+// Callbacks
 function searchUser(e) {
     e.preventDefault()
     
@@ -35,7 +43,6 @@ function displayUserStats(e) {
     let username = e.target.querySelector('#username').value
     
     fetch(`https://lichess.org/api/user/${username}`, {
-        method: 'GET',
         headers: {
             'Accept': "application/json"
         }
@@ -118,6 +125,9 @@ function displayUserStats(e) {
 
 function listUserGames(e) {
     clearGames()
+    if (toggle.textContent === 'Hide Filter') {
+        toggleForm()
+    }
 
     let username
     if (e.type === 'submit') {
@@ -127,7 +137,6 @@ function listUserGames(e) {
     }
 
     fetch(`https://lichess.org/api/games/user/${username}?max=8`, {
-        method: 'GET',
         headers: {
             'Accept': "application/x-ndjson"
         }
@@ -163,34 +172,8 @@ function listGamesByOpening() {
     let username = document.querySelector('#username-display').textContent
     let color = document.querySelector('#color').value
     let play = document.querySelector('#play').value
-
-    const readStream = processLine => response => {
-        const stream = response.body.getReader()
-        const matcher = /\r?\n/
-        const decoder = new TextDecoder()
-        let buf = ''
-      
-        const loop = () =>
-            stream.read().then(({done, value}) => {
-                if (done) {
-                    if (buf.length > 0) processLine(JSON.parse(buf))
-                } else {
-                    const chunk = decoder.decode(value, {
-                        stream: true
-                    });
-                    buf += chunk
-      
-                    const parts = buf.split(matcher)
-                    buf = parts.pop()
-                    for (const i of parts.filter(p => p)) processLine(JSON.parse(i))
-                    return loop()
-                }
-            })
-        return loop()
-    }
     
     fetch(`https://explorer.lichess.ovh/player?player=${username}&color=${color}&play=${play}&recentGames<=8`, {
-        method: 'GET',
         headers: {
             'Accept': "application/nd-json"
         }
@@ -200,7 +183,7 @@ function listGamesByOpening() {
         openingTitle.textContent = `Opening: The ${data.opening.name}`
 
         let openingSubtitle = document.createElement('h5')
-        openingSubtitle.textContent = `${username} with the ${color[0].toUpperCase() + color.slice(1)} Pieces`
+        openingSubtitle.textContent = `${username} with the ${color} pieces`
 
         userGames.append(openingTitle, openingSubtitle)
 
@@ -249,9 +232,7 @@ function displayGame(gameObj) {
 
         gameDisplay.append(header, iframe)
 
-        document.querySelectorAll('.selected').forEach(title => {
-            title.className = ''
-        })
+        document.querySelectorAll('.selected').forEach(title => title.className = '')
         gameTitle.className = 'selected'
     })
 
@@ -306,10 +287,27 @@ function preventScrolling(e) {
     }
 }
 
-// Event Listeners
-form.addEventListener('submit', searchUser)
-toggle.addEventListener('click', toggleForm)
-openingForm.addEventListener('submit', searchOpenings)
-clearFilterButton.addEventListener('click', listUserGames)
-document.addEventListener('keyup', navigateGames)
-window.addEventListener("keydown", preventScrolling)
+const readStream = processLine => response => {
+    const stream = response.body.getReader()
+    const matcher = /\r?\n/
+    const decoder = new TextDecoder()
+    let buf = ''
+  
+    const loop = () =>
+        stream.read().then(({done, value}) => {
+            if (done) {
+                if (buf.length > 0) processLine(JSON.parse(buf))
+            } else {
+                const chunk = decoder.decode(value, {
+                    stream: true
+                });
+                buf += chunk
+  
+                const parts = buf.split(matcher)
+                buf = parts.pop()
+                for (const i of parts.filter(p => p)) processLine(JSON.parse(i))
+                return loop()
+            }
+        })
+    return loop()
+}
