@@ -179,31 +179,34 @@ function listGamesByOpening() {
         }
     })
     .then(readStream(data => {
-        let openingTitle = document.createElement('h4')
-        openingTitle.textContent = `Opening: The ${data.opening.name}`
+        if (userGames.children.length === 0) {
+            let openingTitle = document.createElement('h4')
+            openingTitle.textContent = `Opening: The ${data.opening.name}`
 
-        let openingSubtitle = document.createElement('h5')
-        openingSubtitle.textContent = `${username} with the ${color} pieces`
+            let openingSubtitle = document.createElement('h5')
+            openingSubtitle.textContent = `${username} with the ${color} pieces`
 
-        userGames.append(openingTitle, openingSubtitle)
 
-        if (data.recentGames.length > 0) {
-            data.recentGames.forEach(game => {
-                let gameObj = {
-                    number: data.recentGames.indexOf(game),
-                    winner: game.winner,
-                    whiteUser: game.white.name,
-                    blackUser: game.black.name,
-                    id: game.id
-                }
-                displayGame(gameObj)
-            })
-        } else { 
-            gamesErrorBox.textContent = `${username} has not played the ${data.opening.name} with the ${color} pieces.`
-            gamesErrorBox.className = 'visible'
+            userGames.append(openingTitle, openingSubtitle)
+
+            if (data.recentGames.length > 0) {
+                data.recentGames.forEach(game => {
+                    let gameObj = {
+                        number: data.recentGames.indexOf(game),
+                        winner: game.winner,
+                        whiteUser: game.white.name,
+                        blackUser: game.black.name,
+                        id: game.id
+                    }
+                    displayGame(gameObj)
+                })
+            } else { 
+                gamesErrorBox.textContent = `${username} has not played the ${data.opening.name} with the ${color} pieces.`
+                gamesErrorBox.className = 'visible'
+            }
+
+            clearFilterButton.className = 'visible'
         }
-
-        clearFilterButton.className = 'visible'
     }))
 }
 
